@@ -10,7 +10,7 @@
 //!
 //! ## Where it is careful
 //!
-//! **atlas never announces itself.** A probe that joins the multicast group becomes a peer the
+//! **lokpit never announces itself.** A probe that joins the multicast group becomes a peer the
 //! router can hand work to.
 //!
 //! **Poll rates are staged, and `/api/cluster/state` is the slow one.** The round trip of that

@@ -164,8 +164,8 @@ fn cluster_window() {
     harness
         .render()
         .expect("a graphics adapter")
-        .save(format!("{OUT}/atlas-gui.png"))
-        .unwrap_or_else(|e| panic!("write atlas-gui.png: {e}"));
+        .save(format!("{OUT}/lokpit-gui.png"))
+        .unwrap_or_else(|e| panic!("write lokpit-gui.png: {e}"));
 }
 
 /// The terminal view, rendered through ratatui's test backend: no terminal, no escape codes, and
@@ -225,7 +225,7 @@ fn tui_view() {
     }
     svg.push_str("</svg>\n");
     std::fs::create_dir_all(OUT).expect("docs/img");
-    std::fs::write(format!("{OUT}/atlas-tui.svg"), svg).expect("write atlas-tui.svg");
+    std::fs::write(format!("{OUT}/lokpit-tui.svg"), svg).expect("write lokpit-tui.svg");
 }
 
 fn svg_colour(c: ratatui::style::Color) -> &'static str {

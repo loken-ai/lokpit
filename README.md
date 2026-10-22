@@ -1,4 +1,4 @@
-# atlas
+# lokpit
 
 Watch a loken cluster: what each node holds, what it measures, and where they disagree.
 
@@ -10,21 +10,21 @@ cargo build --release
 
 Three tools over one collector.
 
-- **`atlas watch`** - the living map. Nodes, their devices, the models resident on each with
+- **`lokpit watch`** - the living map. Nodes, their devices, the models resident on each with
   the layers every device holds, what is in flight, the round trips between them, and the
   doctor's verdict in words. A node that reports no device says so rather than leaving a
   blank.
-- **`atlas doctor`** - the inconsistencies a cluster swallows in silence, each as a sentence
+- **`lokpit doctor`** - the inconsistencies a cluster swallows in silence, each as a sentence
   naming the nodes by their id. Exits with the number of rules that fired.
-- **`atlas export`** - OpenMetrics for the facts no single node holds: round trips as the
+- **`lokpit export`** - OpenMetrics for the facts no single node holds: round trips as the
   observer measures them, membership, versions, and doctor's verdicts.
 
-`atlas-gui` draws the same state and takes the same flags. Two views of one cluster, not two
+`lokpit-gui` draws the same state and takes the same flags. Two views of one cluster, not two
 tools: a second collector would mean a second model of the cluster, and two models drift.
 
-![atlas watch](docs/img/atlas-tui.svg)
+![lokpit watch](docs/img/lokpit-tui.svg)
 
-![atlas-gui](docs/img/atlas-gui.png)
+![lokpit-gui](docs/img/lokpit-gui.png)
 
 Both images are rendered by the test suite, driving the same code the binaries run, from a
 snapshot written in `src/screenshots.rs` - so they show the current layout and can show no real
@@ -32,7 +32,7 @@ address, host or model. Regenerate them with
 `cargo test --release --all-features screenshots -- --ignored`.
 
 Node addresses come from `--node`, from a config file, or from listening. None are compiled in.
-A bare `host:port` is taken as `http://`. `atlas watch` and `atlas-gui` start with no node at
+A bare `host:port` is taken as `http://`. `lokpit watch` and `lokpit-gui` start with no node at
 all and keep listening: a node appears as soon as it announces itself, and one found this way
 leaves once it has stopped both announcing and answering. Nodes named with `--node` or in the
 config file always stay. `doctor` and `export` listen once before their single poll. The same
@@ -66,7 +66,7 @@ is forwarded to a holder; that is the cluster working as designed.
 
 ## Where it is careful
 
-**atlas never announces itself.** A probe that joins the discovery group becomes a peer the
+**lokpit never announces itself.** A probe that joins the discovery group becomes a peer the
 router can hand work to.
 
 **`/api/cluster/state` is polled slowly.** The round trip of that request is what the router
@@ -78,7 +78,7 @@ resets counters.
 **`0.0` means never measured, not zero.** Every rate a node publishes uses zero for unknown -
 the server says so explicitly, because when both nodes report zero every candidate ties at
 infinity. Printing `0 tok/s` states a number the engine went out of its way not to mean, so
-atlas prints `-`.
+lokpit prints `-`.
 
 **`serves: null` is not `serves: []`.** Null is a node that did not say; empty is a node that
 serves nothing. Collapsing them makes a weightless node look like an unknown one.
@@ -91,7 +91,7 @@ would measure a path the router does not price.
 
 ## Building
 
-`cargo build --release` builds both binaries; `--no-default-features` builds `atlas` alone,
+`cargo build --release` builds both binaries; `--no-default-features` builds `lokpit` alone,
 without the window and its display stack. The minimum toolchain is the one the window's
 libraries require, stated in `Cargo.toml`; the workflow checks it, along with formatting, the
 lints, the tests, the documentation and the dependency audit.

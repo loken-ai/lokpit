@@ -12,7 +12,7 @@ use crate::discovery::{Heard, Listener};
 use crate::model::ClusterSnapshot;
 
 /// Endpoints and the cluster name, from the flags and an optional config file. The file has
-/// the same `[cluster]` block a node reads, so an operator points atlas at the node's own
+/// the same `[cluster]` block a node reads, so an operator points lokpit at the node's own
 /// configuration rather than restating it.
 pub fn from_flags_and_file(
     nodes: &[String],
@@ -192,7 +192,7 @@ mod tests {
     /// file. A node listed in both must appear once.
     #[test]
     fn flags_and_file_are_unioned() {
-        let dir = std::env::temp_dir().join("atlas-seeds-test");
+        let dir = std::env::temp_dir().join("lokpit-seeds-test");
         std::fs::create_dir_all(&dir).expect("temp dir");
         let path = dir.join("cluster.toml");
         std::fs::write(

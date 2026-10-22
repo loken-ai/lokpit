@@ -1,21 +1,21 @@
-//! `atlas-gui` - the same cluster, drawn.
+//! `lokpit-gui` - the same cluster, drawn.
 //!
 //! A second view on one state, not a second tool: it renders the `ClusterSnapshot` the core
 //! produces and shows what `doctor` reasons about, so what it displays and what the terminal
 //! reports cannot drift apart.
 //!
 //! This binary resolves where the nodes are and keeps a polling loop fed; the window itself is
-//! `atlas_core::app`, which is also what the documentation screenshot drives.
+//! `lokpit_core::app`, which is also what the documentation screenshot drives.
 
 use std::sync::atomic::AtomicBool;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
-use atlas_core::app::{Gui, Shared};
 use clap::Parser;
+use lokpit_core::app::{Gui, Shared};
 
 #[derive(Parser)]
-#[command(name = "atlas-gui", version, about = "Watch a loken cluster")]
+#[command(name = "lokpit-gui", version, about = "Watch a loken cluster")]
 struct Cli {
     /// A node to poll. Repeatable, and unioned with whatever the config file lists.
     #[arg(long = "node", value_name = "URL")]
@@ -39,7 +39,7 @@ struct Cli {
 fn main() -> eframe::Result<()> {
     let cli = Cli::parse();
     let (seeds, cluster) =
-        match atlas_core::seeds::from_flags_and_file(&cli.nodes, cli.config.as_deref()) {
+        match lokpit_core::seeds::from_flags_and_file(&cli.nodes, cli.config.as_deref()) {
             Ok(v) => v,
             Err(e) => {
                 eprintln!("{e}");
@@ -62,7 +62,7 @@ fn main() -> eframe::Result<()> {
     let discover = !cli.no_discovery;
 
     eframe::run_native(
-        "atlas",
+        "lokpit",
         eframe::NativeOptions {
             viewport: egui::ViewportBuilder::default().with_inner_size([1100.0, 760.0]),
             ..Default::default()
@@ -80,7 +80,7 @@ fn main() -> eframe::Result<()> {
                 let measure_for_task = measure.clone();
                 let mut measuring = false;
                 let mut roster =
-                    atlas_core::seeds::Roster::new(seeds, cluster.clone(), discover, every);
+                    lokpit_core::seeds::Roster::new(seeds, cluster.clone(), discover, every);
                 // Its own thread and runtime: the window must never wait on a node.
                 std::thread::spawn(move || {
                     let rt = tokio::runtime::Builder::new_current_thread()
@@ -88,23 +88,23 @@ fn main() -> eframe::Result<()> {
                         .build()
                         .expect("runtime");
                     rt.block_on(async move {
-                        let mut previous = atlas_core::model::ClusterSnapshot::default();
+                        let mut previous = lokpit_core::model::ClusterSnapshot::default();
                         loop {
                             let (joined, heard) = roster.refresh(&previous);
                             let endpoints = roster.endpoints().to_vec();
                             let wanted =
                                 measure_for_task.load(std::sync::atomic::Ordering::Relaxed);
                             if wanted != measuring {
-                                atlas_core::collect::set_measuring(&endpoints, wanted).await;
+                                lokpit_core::collect::set_measuring(&endpoints, wanted).await;
                                 measuring = wanted;
                             } else if measuring && !joined.is_empty() {
-                                atlas_core::collect::set_measuring(&joined, true).await;
+                                lokpit_core::collect::set_measuring(&joined, true).await;
                             }
                             let mut snapshot =
-                                atlas_core::collect::poll(&endpoints, cluster.clone()).await;
+                                lokpit_core::collect::poll(&endpoints, cluster.clone()).await;
                             snapshot.foreign = heard.foreign;
                             previous = snapshot.clone();
-                            let findings = atlas_core::doctor::all(&snapshot);
+                            let findings = lokpit_core::doctor::all(&snapshot);
                             {
                                 let mut shared = shared_for_task.lock().expect("shared state");
                                 shared.snapshot = snapshot;

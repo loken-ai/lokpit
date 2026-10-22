@@ -300,7 +300,7 @@ fn draw(frame: &mut Frame, snapshot: &ClusterSnapshot, findings: &[Finding], not
 
     frame.render_widget(
         Paragraph::new(header_line(snapshot))
-            .block(Block::default().borders(Borders::ALL).title(" atlas ")),
+            .block(Block::default().borders(Borders::ALL).title(" lokpit ")),
         rows[0],
     );
     frame.render_widget(

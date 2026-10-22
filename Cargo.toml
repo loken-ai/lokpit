@@ -1,28 +1,28 @@
 [package]
-name = "atlas"
+name = "lokpit"
 version = "0.1.0"
 edition = "2021"
 description = "Watch a loken cluster: what each node holds, what it measures, and where they disagree"
-repository = "https://github.com/loken-ai/atlas"
+repository = "https://github.com/loken-ai/lokpit"
 license = "MIT OR Apache-2.0"
 keywords = ["monitoring", "cluster", "tui", "prometheus"]
 categories = ["command-line-utilities"]
 rust-version = "1.92"
 
 [lib]
-name = "atlas_core"
+name = "lokpit_core"
 path = "src/lib.rs"
 
 # Two views of one state, not two tools. A second crate would mean a second collector, and
 # two models of the cluster that drift - which is how the GUI ended up reading a flag the
 # server stopped emitting.
 [[bin]]
-name = "atlas"
-path = "src/bin/atlas.rs"
+name = "lokpit"
+path = "src/bin/lokpit.rs"
 
 [[bin]]
-name = "atlas-gui"
-path = "src/bin/atlas-gui.rs"
+name = "lokpit-gui"
+path = "src/bin/lokpit-gui.rs"
 required-features = ["gui"]
 
 [dependencies]
@@ -51,7 +51,7 @@ eframe = { version = "0.35", default-features = false, features = ["glow", "defa
 
 [features]
 default = ["gui"]
-# The core knows neither ratatui nor egui. Turning this off builds `atlas` alone, without
+# The core knows neither ratatui nor egui. Turning this off builds `lokpit` alone, without
 # X11, Wayland or a GPU stack - which is what an exporter running as a service wants.
 gui = ["dep:eframe", "dep:egui", "dep:egui_extras"]
 

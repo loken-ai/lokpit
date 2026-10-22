@@ -1,4 +1,4 @@
-//! `atlas` - watch a loken cluster, or ask it what is wrong, or export what only an observer
+//! `lokpit` - watch a loken cluster, or ask it what is wrong, or export what only an observer
 //! can measure.
 //!
 //! Node addresses come from the command line, from a config file, or from listening. None of
@@ -8,11 +8,11 @@
 use std::process::ExitCode;
 use std::time::Duration;
 
-use atlas_core::{doctor, metrics};
 use clap::{Parser, Subcommand};
+use lokpit_core::{doctor, metrics};
 
 #[derive(Parser)]
-#[command(name = "atlas", version, about = "Watch a loken cluster")]
+#[command(name = "lokpit", version, about = "Watch a loken cluster")]
 struct Cli {
     /// A node to poll. Repeatable, and unioned with whatever the config file lists.
     #[arg(long = "node", value_name = "URL")]
@@ -53,7 +53,7 @@ enum Command {
 async fn main() -> ExitCode {
     let cli = Cli::parse();
     let (seeds, cluster) =
-        match atlas_core::seeds::from_flags_and_file(&cli.nodes, cli.config.as_deref()) {
+        match lokpit_core::seeds::from_flags_and_file(&cli.nodes, cli.config.as_deref()) {
             Ok(v) => v,
             Err(e) => {
                 eprintln!("{e}");
@@ -71,11 +71,11 @@ async fn main() -> ExitCode {
         seeds: Vec<String>,
         cluster: Option<String>,
         discover: bool,
-    ) -> Option<atlas_core::model::ClusterSnapshot> {
+    ) -> Option<lokpit_core::model::ClusterSnapshot> {
         let mut endpoints = seeds;
         let mut foreign = std::collections::BTreeMap::new();
         if discover {
-            let (heard, problem) = atlas_core::seeds::add_heard(
+            let (heard, problem) = lokpit_core::seeds::add_heard(
                 &mut endpoints,
                 cluster.as_deref(),
                 Duration::from_millis(1200),
@@ -89,7 +89,7 @@ async fn main() -> ExitCode {
             eprintln!("no nodes: pass --node URL, or --config with a [cluster] block");
             return None;
         }
-        let mut snapshot = atlas_core::collect::poll(&endpoints, cluster).await;
+        let mut snapshot = lokpit_core::collect::poll(&endpoints, cluster).await;
         snapshot.foreign = foreign;
         Some(snapshot)
     }
@@ -100,7 +100,7 @@ async fn main() -> ExitCode {
                 eprintln!("no nodes: pass --node URL, --config with a [cluster] block, or drop --no-discovery");
                 return ExitCode::from(2);
             }
-            return match atlas_core::tui::run(
+            return match lokpit_core::tui::run(
                 seeds,
                 cluster,
                 Duration::from_secs(every.max(1)),

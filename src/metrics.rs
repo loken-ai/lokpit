@@ -46,7 +46,7 @@ pub fn encode(snapshot: &ClusterSnapshot, findings: &[Finding]) -> String {
         .collect();
     family(
         &mut out,
-        "atlas_node_up",
+        "lokpit_node_up",
         "gauge",
         "1 when the observer reached the node.",
         &up,
@@ -60,7 +60,7 @@ pub fn encode(snapshot: &ClusterSnapshot, findings: &[Finding]) -> String {
         .collect();
     family(
         &mut out,
-        "atlas_node_rtt_ms",
+        "lokpit_node_rtt_ms",
         "gauge",
         "Round trip on the request already being made, as the observer measures it.",
         &rtt,
@@ -77,7 +77,7 @@ pub fn encode(snapshot: &ClusterSnapshot, findings: &[Finding]) -> String {
         .collect();
     family(
         &mut out,
-        "atlas_node_busy",
+        "lokpit_node_busy",
         "gauge",
         "Generations the node reports in flight.",
         &busy,
@@ -92,7 +92,7 @@ pub fn encode(snapshot: &ClusterSnapshot, findings: &[Finding]) -> String {
         .collect();
     family(
         &mut out,
-        "atlas_node_energy_joules_total",
+        "lokpit_node_energy_joules_total",
         "counter",
         "Energy the node attributes to requests, where it reports any.",
         &joules,
@@ -102,7 +102,7 @@ pub fn encode(snapshot: &ClusterSnapshot, findings: &[Finding]) -> String {
     if complete {
         family(
             &mut out,
-            "atlas_cluster_energy_joules_total",
+            "lokpit_cluster_energy_joules_total",
             "counter",
             "Cluster energy. Emitted only when every node reports, so it is never a partial sum.",
             &[(format!("cluster=\"{}\"", label(cluster)), total)],
@@ -131,7 +131,7 @@ pub fn encode(snapshot: &ClusterSnapshot, findings: &[Finding]) -> String {
         .collect();
     family(
         &mut out,
-        "atlas_doctor_findings",
+        "lokpit_doctor_findings",
         "gauge",
         "Inconsistencies, by rule.",
         &rules,
@@ -192,13 +192,13 @@ mod tests {
             nodes: vec![node("http://a", Some(9.0)), node("http://b", None)],
             ..Default::default()
         };
-        assert!(!encode(&partial, &[]).contains("atlas_cluster_energy_joules_total"));
+        assert!(!encode(&partial, &[]).contains("lokpit_cluster_energy_joules_total"));
         let whole = ClusterSnapshot {
             nodes: vec![node("http://a", Some(9.0)), node("http://b", Some(1.0))],
             ..Default::default()
         };
         assert!(encode(&whole, &[])
-            .contains("atlas_cluster_energy_joules_total{cluster=\"unknown\"} 10"));
+            .contains("lokpit_cluster_energy_joules_total{cluster=\"unknown\"} 10"));
     }
 
     /// Two clusters can share a network by design, so a node label alone is ambiguous.

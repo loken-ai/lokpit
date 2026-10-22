@@ -94,7 +94,7 @@ impl eframe::App for Gui {
                 ui.horizontal(|ui| {
                     Icon::Globe.show(ui, 16.0, view::TEXT);
                     ui.label(
-                        egui::RichText::new("atlas")
+                        egui::RichText::new("lokpit")
                             .size(15.0)
                             .strong()
                             .color(view::TEXT),

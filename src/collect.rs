@@ -322,7 +322,7 @@ pub async fn set_measuring(endpoints: &[String], on: bool) {
 /// Poll every node named, in parallel across nodes and in sequence within each one.
 pub async fn poll(endpoints: &[String], cluster: Option<String>) -> ClusterSnapshot {
     let client = reqwest::Client::builder()
-        .user_agent(concat!("atlas/", env!("CARGO_PKG_VERSION")))
+        .user_agent(concat!("lokpit/", env!("CARGO_PKG_VERSION")))
         .build()
         .unwrap_or_default();
     let mut nodes: Vec<Node> = Vec::with_capacity(endpoints.len());
