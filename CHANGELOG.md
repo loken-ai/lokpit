@@ -5,6 +5,8 @@ All notable changes to this project are documented here, in the format of
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-24
+
 ### Added
 
 - Model: ClusterSnapshot and wire types keep the server's distinctions: unknown is not zero, absent is not empty.
